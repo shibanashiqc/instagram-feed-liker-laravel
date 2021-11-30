@@ -15,8 +15,9 @@
                 <span class="btn-inner--icon"><i class="fas fa-user-edit"></i></span>
                 <span class="btn-inner--text">Add IG </span>
               </a>
-
-
+              <a href="/logs" class="btn btn-sm btn-primary btn-round btn-icon" data-toggle="tooltip" data-original-title="Server">
+                <span class="btn-inner--icon"><i class="ni ni-spaceship"></i></span>
+                <span class="btn-inner--text">Logs</span>
               </a>
             </div>
               </div>
@@ -44,4 +45,11 @@
   </tr>
 
 @endforeach
+
+</tbody>
+</div>
+</div>
+</div>
+</div>
+
 @endsection

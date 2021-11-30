@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Login;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\InstagramController;
-
+use App\Models\Logs;
 
 class CronController extends Controller
 {
@@ -46,6 +46,12 @@ public function run(){
    if($json->status=='ok')
    {
 
+    $logs = new Logs();
+    $logs->username = $username;
+    $logs->status = "ok";
+    $logs->media_id = $mediaid;
+    $logs->save();
+
     $return = [];
          $return[] = [
          'status' => $json->status,
@@ -56,6 +62,13 @@ public function run(){
     break;
 
    }else{
+
+    $logs = new Logs();
+    $logs->username = $username;
+    $logs->status = "fail";
+    $logs->media_id = $mediaid;
+    $logs->save();
+
 
     $return = [];
          $return[] = [
@@ -71,6 +84,7 @@ public function run(){
     }
 
    }
+
 
 
 }

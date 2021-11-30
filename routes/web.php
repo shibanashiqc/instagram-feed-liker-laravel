@@ -24,4 +24,5 @@ Route::get('/login', "\App\Http\Controllers\InstagramController@login");
 Route::post('/instagram/login', "\App\Http\Controllers\InstagramController@instagram_login");
 Route::get('/delete/{id}', "\App\Http\Controllers\HomeController@destroy");
 Route::get('/cron', "\App\Http\Controllers\CronController@run");
+Route::get('/logs', "\App\Http\Controllers\HomeController@logs");
 
