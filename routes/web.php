@@ -14,5 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+   // return view('instagram.login');
+   return redirect('/login');
 });
+
+
+Route::get('/main', "\App\Http\Controllers\HomeController@index");
+Route::get('/login', "\App\Http\Controllers\InstagramController@login");
+Route::post('/instagram/login', "\App\Http\Controllers\InstagramController@instagram_login");
+Route::get('/delete/{id}', "\App\Http\Controllers\HomeController@destroy");
+Route::get('/cron', "\App\Http\Controllers\CronController@run");
+
