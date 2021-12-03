@@ -21,26 +21,43 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Set up Instabot Feed Liker
-1.Configure .env file (database)
+## Set up localhost 
+
+Setup Composer "composer install" - command 
+
+1.Configure .env file ( set your database ) 
+
 2.Migrate (php artisan migrate )
+
 3.Run Server (php artisan serve)
+
 4.Login your insatgram account 
-4.Run Cron file http://localhost/cron
+
+4.Cron command ( php artisan schedule:run ) 
 
 ## Set up Instabot Feed Liker Cpanel
 
 1.Upload Script and Configure .env file (database) and chang app url (website url)
 
 DB_CONNECTION=mysql
+
 DB_HOST=localhost
+
 DB_PORT=3306
-DB_DATABASE=ig
-DB_USERNAME=root
-DB_PASSWORD=pass
+
+DB_DATABASE=ig (db name )
+
+DB_USERNAME=root (db username)
+
+DB_PASSWORD=pass ( db password )
+
 
 2.[Download Database file](https://igsocialtools.000webhostapp.com/bot.sql).
+
+[Download full script ](https://igsocialtools.000webhostapp.com/igbot.zip).
+
 3.Login your account
+
 4.Run cron insatgram http://domain/cron
 
 ## License
