@@ -30,7 +30,7 @@
 
       </tr>
   </thead>
-  {{-- {{ $stmt }} --}}
+
   @foreach ($stmt as $media)
 
   <tbody>
@@ -38,11 +38,11 @@
       <tr>
 
 
-        <td>@ {{ $media->username }}</td>
-        <td> {{ $media->media_id }}</td>
-    <td>{{ $media->status }}</td>
-    <td>{{ $media->created_at }}</td>
-
+        <td>@ {{$media->username}}</td>
+        <td> {{$media->media_id}}</td>
+    <td>{{$media->status}}</td>
+    <td>{{$media->created_at}}</td>
+        <td></td>
 
       </tr>
          </tbody>

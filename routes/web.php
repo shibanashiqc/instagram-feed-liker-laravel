@@ -13,16 +13,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', function () {
-   // return view('instagram.login');
-   return redirect('/login');
+    return view('welcome');
+   //return redirect('/web/home');
+});
+Route::group(['middleware' => ['AuthCheck']], function(){
+
+Route::get('/auth/login', "\App\Http\Controllers\InstagramController@login");
+
+Route::get('/dashboard/main', "\App\Http\Controllers\HomeController@index");
+Route::get('/dashboard/logs/{username}', "\App\Http\Controllers\HomeController@logs");
 });
 
-
-Route::get('/main', "\App\Http\Controllers\HomeController@index");
-Route::get('/login', "\App\Http\Controllers\InstagramController@login");
+Route::get('/dashboard/delete/{id}', "\App\Http\Controllers\HomeController@destroy");
+Route::get('/auth/logout', "\App\Http\Controllers\InstagramController@logout");
+Route::get('/dashboard/logs_all', "\App\Http\Controllers\HomeController@logs_all");
 Route::post('/instagram/login', "\App\Http\Controllers\InstagramController@instagram_login");
-Route::get('/delete/{id}', "\App\Http\Controllers\HomeController@destroy");
 Route::get('/cron', "\App\Http\Controllers\CronController@run");
-Route::get('/logs', "\App\Http\Controllers\HomeController@logs");
+Route::get('/test/{id}', "\App\Http\Controllers\InstagramController@test");
+
 

@@ -1,12 +1,26 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Session;
 use Illuminate\Http\Request;
 use App\Models\Login;
+use Illuminate\Support\Facades\Hash;
 
 class InstagramController extends Controller
 {
+
+public function test ($value){
+return $value;
+}
+
+/*
+    public function getimg($url){
+        $avatarName = time(). '.png';
+       // $avatarPath = public_path('/images/');
+        file_put_contents(public_path('/images/'.$avatarName), file_get_contents($url));
+        return true;
+    }
+*/
     public function instagram($ighost, $useragent, $url, $cookie = 0, $data = 0, $httpheader = array(), $proxy = 0 ){
         $url = $ighost ? 'https://i.instagram.com/api/v1/' . $url : $url;
         $ch = curl_init($url);
@@ -103,6 +117,48 @@ class InstagramController extends Controller
 
     }
     */
+
+    public function relogin($post_username, $post_password,$proxy){
+        $postq = json_encode([
+            'phone_id' => $this->generateUUID(true),
+            '_csrftoken' => $this->get_csrftoken(),
+            'username' => $post_username,
+            'guid' => $this->generateUUID(true),
+            'device_id' => $this->generateUUID(true),
+            'password' => $post_password,
+            'login_attempt_count' => 0
+        ]);
+        $a = $this->instagram(1, $this->generate_useragent(), 'accounts/login/', 0, $this->hook($postq),array(),$proxy);
+        $header = $a[0];
+        $a = json_decode($a[1]);
+        if($a->status == 'ok'){
+            preg_match('#set-cookie: csrftoken=([^;]+)#', $header, $match);
+            $csrftoken = $match[1];
+            preg_match_all('%set-cookie: (.*?);%',$header,$d);$cookies = '';
+            for($o=0;$o<count($d[0]);$o++)$cookies.=$d[1][$o].";";
+            $id = $a->logged_in_user->pk;
+            $user = $this->instagram(1, $this->generate_useragent(), 'users/'.$id.'/info', $cookies);
+            $datas = json_decode($user[1]);
+           // die(json_encode($datas));
+            $name = $datas->user->full_name;
+            $username = $datas->user->username;
+            $followers = $datas->user->follower_count;
+            $following = $datas->user->following_count;
+            $biography = base64_encode($datas->user->biography);
+            $profile_pic_url = $datas->user->profile_pic_url;
+            $array = json_encode(['result' => true, 'cookies' => $cookies, 'useragent' => $this->generate_useragent() , 'name' => $name, 'username' => $username, 'followers' => $followers, 'following' => $following, 'biography' => $biography  , 'photo' => $profile_pic_url  ,'id' => $id, 'token' => $csrftoken]);
+        } else {
+            $msg = $a->message;
+            $array = json_encode(['result' => false, 'msg' => $msg]);
+        }
+        return $array;
+
+    }
+
+
+
+
+
     public function instagram_login(Request  $request){
 
          $post_username =  request('username');
@@ -113,9 +169,12 @@ class InstagramController extends Controller
 
          if (Login::where('username', $post_username)->exists()) {
             // exists
-            $msg = 'Already have database please check your username!';
-            die(json_encode(array('result' => 0, 'content' => '<div class="alert alert-danger alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><i class="fa fa-times" aria-hidden="true"></i> <b>Status:</b> '.$msg.'.</div><script>swal({title: "Hi, '.$msg.'!", text: "Please enter the data correctly!", icon: "error", timer: 2000});document.getElementById("usrloginform").reset();</script>')));
-        }
+            // $userInfo = Login::where('username','=', $request->username)->first();
+            // if(Hash::check($request->password, $userInfo->password)){
+            $request->session()->put('LoggedUser', $post_username);
+            //die(json_encode(array('result' => 0, 'content' => '<div class="alert alert-success alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><i class="fa fa-check" aria-hidden="true"></i> <b>Status:</b> Sukses, Login ...</div><script>swal({title: "Hi, Sukses Login Account Added Success", text: "Mengalihkan ...", icon: "success", timer: 2000});setTimeout(function(){location.href = \'../dashboard/main\';}, 2000);</script>')));
+            return json_encode(array('result' => 0, 'content' => '<div class="alert alert-success alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><i class="fa fa-check" aria-hidden="true"></i> <b>Status:</b> Sukses, Login ...</div><script>swal({title: "Hi, Sukses Login Account Added Success", text: "Mengalihkan ...", icon: "success", timer: 2000});setTimeout(function(){location.href = \'../dashboard/main\';}, 2000);</script>'));
+            }else{
 
         // echo request('proxy');
         // die();
@@ -145,21 +204,47 @@ class InstagramController extends Controller
             preg_match_all('%set-cookie: (.*?);%',$header,$d);$cookies = '';
             for($o=0;$o<count($d[0]);$o++)$cookies.=$d[1][$o].";";
             $id = $a->logged_in_user->pk;
+            $user = $this->instagram(1, $this->generate_useragent(), 'users/'.$id.'/info', $cookies);
+            $datas = json_decode($user[1]);
+            // die(json_encode($datas));
+            $name = $datas->user->full_name;
+            $username = $datas->user->username;
+            $followers = $datas->user->follower_count;
+    	    $following = $datas->user->following_count;
+    	    $biography = base64_encode($datas->user->biography);
+            $profile_pic_url = $datas->user->profile_pic_url;
+
+            //$profile = $this->getimg($profile_pic_url);
+            $avatarName = time(). '.png';
+            file_put_contents(public_path('/images/'.$avatarName), file_get_contents($profile_pic_url));
+
+
             $array = json_encode(['result' => true, 'cookies' => $cookies,  'csrftoken' => $csrftoken, 'useragent' => $this->generate_useragent(), 'id' => $id, 'token' => $csrftoken]);
 
             $instgarm = new Login();
-            $instgarm->username = request('username');
-            $instgarm->password = bcrypt($post_password);
+            $instgarm->username = $username;
+            $instgarm->password = $request->password;
             $instgarm->cookie = $cookies;
+            $instgarm->avatar = "/images/".$avatarName;
             $instgarm->save();
-            die(json_encode(array('result' => 0, 'content' => '<div class="alert alert-success alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><i class="fa fa-check" aria-hidden="true"></i> <b>Status:</b> Sukses, Login ...</div><script>swal({title: "Hi, Sukses Login Account Added Success", text: "Mengalihkan ...", icon: "success", timer: 2000});setTimeout(function(){location.href = \'../main\';}, 2000);</script>')));
-        } else {
+            $request->session()->put('LoggedUser', $post_username);
+
+            return json_encode(array('result' => 0, 'content' => '<div class="alert alert-success alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><i class="fa fa-check" aria-hidden="true"></i> <b>Status:</b> Sukses, Login ...</div><script>swal({title: "Hi, Sukses Login Account Added Success", text: "Mengalihkan ...", icon: "success", timer: 2000});setTimeout(function(){location.href = \'../dashboard/main\';}, 2000);</script>'));
+
+            } else {
             $msg = $a->message;
             $array = json_encode(['result' => false, 'msg' => $msg]);
             die(json_encode(array('result' => 0, 'content' => '<div class="alert alert-danger alert-dismissable"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><i class="fa fa-times" aria-hidden="true"></i> <b>Status:</b> '.$msg.'.</div><script>swal({title: "Hi, '.$msg.'!", text: "Please enter the data correctly!", icon: "error", timer: 2000});document.getElementById("usrloginform").reset();</script>')));
         }
-
+    }
         return true;
+    }
+
+  public  function logout(){
+        if(session()->has('LoggedUser')){
+            session()->pull('LoggedUser');
+            return redirect('/auth/login');
+        }
     }
 
         }
