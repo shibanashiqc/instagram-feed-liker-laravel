@@ -1,5 +1,5 @@
 ## How to Deploy laravel project to heroku
-[Video Link :](https://youtu.be/7Nq_a2QiaHo)
+Video Link : [Click Here ](https://youtu.be/7Nq_a2QiaHo)
 
 ## Home Page
 <p align="center"><a href="" target="_blank"><img src="https://igsocialtools.000webhostapp.com/forndend.PNG" width="400"></a></p>
