@@ -62,7 +62,7 @@ DB_PASSWORD=pass ( db password )
 
 2.[Download Database file](https://igsocialtools.000webhostapp.com/bot.sql).
 
-[Download full script ](https://igsocialtools.000webhostapp.com/igbot.zip).
+  [Download full script ](https://igsocialtools.000webhostapp.com/igbot.zip).
 
 3.Login your account
 
